@@ -1,6 +1,12 @@
-const BASE_URL = "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/eur.json";
+//const BASE_URL = "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/eur.json"; //old api before migration
+const BASE_URL = "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies"; //new api after migration, stated in the instruction
 
 const dropdowns = document.querySelectorAll(".dropdown select");
+const btn = document.querySelector("form button");
+const fromCurr = document.querySelector(".from select");
+const toCurr = document.querySelector(".to select");
+const msg = document.querySelector(".msg");
+
 
 
 
@@ -22,6 +28,27 @@ for(let select of dropdowns){
     });
 }
 
+const updateExchangeRate = async () => {
+    let amount = document.querySelector(".amount input");
+    let amtVal = amount.value;
+    if(amtVal === "" || amtVal < 1){
+        amtVal = 1;
+        amount.value = "1";
+    }
+
+    //console.log(fromCurr.value, toCurr.value);
+    const URL = `${BASE_URL}/${fromCurr.value.toLowerCase()}.min.json`  ///${toCurr.value.toLowerCase()}.json`
+    let response = await fetch(URL);
+    let data = await response.json();
+    let from = fromCurr.value.toLowerCase();
+    let to = toCurr.value.toLowerCase();
+    //let rate = data[toCurr.value.toLowerCase()];
+    let rate = data[from][to];
+    
+    let finalAmount = amtVal * rate;
+    msg.innerText = `${amtVal} ${fromCurr.value} = ${finalAmount} ${toCurr.value}`;
+};
+
 const updateFlag = (element) => {
     let currCode = element.value;
     let countryCode = countryList[currCode];
@@ -30,3 +57,12 @@ const updateFlag = (element) => {
     img.src = newSrc;
 }
 
+
+btn.addEventListener("click", (evt) => {
+    evt.preventDefault();
+    updateExchangeRate();
+});
+
+window.addEventListener("load", () => {
+    updateExchangeRate();
+});
