@@ -41,9 +41,12 @@ const updateExchangeRate = async () => {
     let response = await fetch(URL);
     let data = await response.json();
     let from = fromCurr.value.toLowerCase();
+    console.log(from);
     let to = toCurr.value.toLowerCase();
+    console.log(to);
     //let rate = data[toCurr.value.toLowerCase()];
     let rate = data[from][to];
+    console.log(rate);
     
     let finalAmount = amtVal * rate;
     msg.innerText = `${amtVal} ${fromCurr.value} = ${finalAmount} ${toCurr.value}`;
